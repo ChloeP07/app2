@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's for Food? — Spin to decide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #2B1B2E;
+    --ink-deep: #1E1220;
+    --cream: #FFF3F6;
+    --cream-dim: #F6DEE6;
+    --coral: #E8447A;
+    --saffron: #FFA69E;
+    --olive: #8FA68E;
+    --plum: #B85C8A;
+    --teal: #FF8FB3;
+    --cherry: #D6336C;
+    --line: rgba(255,243,246,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 50% -10%, #263256 0%, var(--ink) 55%, var(--ink-deep) 100%);
+    font-family:'Inter', sans-serif;
+    color: var(--cream);
+    display:flex;
+    justify-content:center;
+    padding: 40px 20px 60px;
+  }
+  .app{
+    width:100%;
+    max-width: 880px;
+  }
+  header{
+    text-align:center;
+    margin-bottom: 28px;
+  }
+  h1{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size: clamp(2.1rem, 5vw, 3.1rem);
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  h1 .hungry{
+    color: var(--saffron);
+  }
+  header p{
+    margin:0;
+    color: var(--cream-dim);
+    font-size: 1.02rem;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .stage{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin: 36px 0 8px;
+  }
+
+  .wheel-wrap{
+    position:relative;
+    width: min(360px, 78vw);
+    height: min(360px, 78vw);
+  }
+  .pointer{
+    position:absolute;
+    top: -14px;
+    left:50%;
+    transform: translateX(-50%);
+    width: 0; height:0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 24px solid var(--cream);
+    filter: drop-shadow(0 3px 3px rgba(0,0,0,0.35));
+    z-index: 3;
+  }
+  canvas#wheel{
+    display:block;
+    width:100%;
+    height:100%;
+    border-radius: 50%;
+    box-shadow: 0 0 0 8px var(--ink-deep), 0 0 0 11px var(--line), 0 20px 40px rgba(0,0,0,0.45);
+  }
+  .hub{
+    position:absolute;
+    top:50%; left:50%;
+    width: 58px; height:58px;
+    transform: translate(-50%,-50%);
+    background: var(--cream);
+    border-radius: 50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+    z-index: 2;
+    font-size: 1.5rem;
+  }
+
+  button.spin{
+    margin-top: 30px;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size: 1.25rem;
+    color: var(--ink-deep);
+    background: var(--saffron);
+    border: none;
+    padding: 14px 46px;
+    border-radius: 999px;
+    cursor:pointer;
+    box-shadow: 0 6px 0 #B03060, 0 10px 18px rgba(0,0,0,0.35);
+    transition: transform .08s ease, box-shadow .08s ease;
+  }
+  button.spin:active{
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #B03060, 0 4px 10px rgba(0,0,0,0.3);
+  }
+  button.spin:disabled{
+    opacity:0.55;
+    cursor:not-allowed;
+    box-shadow: 0 6px 0 #B03060, 0 10px 18px rgba(0,0,0,0.2);
+  }
+
+  .result{
+    margin-top: 26px;
+    min-height: 74px;
+    text-align:center;
+  }
+  .result .card{
+    display:inline-block;
+    background: var(--cream);
+    color: var(--ink-deep);
+    border-radius: 16px;
+    padding: 14px 30px;
+    font-family:'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+    animation: pop .35s ease;
+  }
+  .result .card span{
+    display:block;
+    font-family:'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+    color: var(--cherry);
+    margin-bottom: 2px;
+  }
+  @keyframes pop{
+    0%{ transform: scale(0.85); opacity:0; }
+    100%{ transform: scale(1); opacity:1; }
+  }
+
+  .panel{
+    margin-top: 46px;
+    background: rgba(255,249,238,0.05);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 26px 26px 22px;
+  }
+  .panel h2{
+    font-family:'Baloo 2', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+  .panel p.hint{
+    margin: 0 0 16px;
+    color: var(--cream-dim);
+    font-size: 0.88rem;
+  }
+
+  form.add-row{
+    display:flex;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  form.add-row input{
+    flex:1;
+    background: var(--ink-deep);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--cream);
+    font-family:'Inter', sans-serif;
+    font-size: 0.95rem;
+  }
+  form.add-row input::placeholder{ color: rgba(255,249,238,0.4); }
+  form.add-row input:focus{
+    outline: none;
+    border-color: var(--saffron);
+  }
+  form.add-row button{
+    font-family:'Inter', sans-serif;
+    font-weight: 600;
+    background: var(--teal);
+    color: var(--cream);
+    border: none;
+    border-radius: 10px;
+    padding: 0 20px;
+    cursor:pointer;
+    font-size: 0.92rem;
+  }
+  form.add-row button:hover{ filter: brightness(1.08); }
+
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 10px;
+  }
+  .chip{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    background: var(--ink-deep);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 8px 7px 14px;
+    font-size: 0.9rem;
+  }
+  .chip .swatch{
+    width: 10px; height:10px;
+    border-radius: 50%;
+    flex-shrink:0;
+  }
+  .chip button{
+    background: transparent;
+    border: none;
+    color: var(--cream-dim);
+    cursor:pointer;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    font-size: 1rem;
+    line-height:1;
+  }
+  .chip button:hover{
+    background: rgba(255,107,91,0.25);
+    color: var(--coral);
+  }
+
+  .empty{
+    color: var(--cream-dim);
+    font-size: 0.9rem;
+    font-style: italic;
+  }
+
+  footer{
+    text-align:center;
+    margin-top: 34px;
+    color: rgba(255,249,238,0.35);
+    font-size: 0.78rem;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .result .card{ animation:none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>What's for <span class="hungry">Food?</span></h1>
+    <p>Can't decide what to eat? Load up your options and let the wheel pick for you.</p>
+  </header>
+
+  <div class="stage">
+    <div class="wheel-wrap">
+      <div class="pointer"></div>
+      <canvas id="wheel" width="640" height="640"></canvas>
+      <div class="hub">🍽️</div>
+    </div>
+    <button class="spin" id="spinBtn">Spin the wheel</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Your menu</h2>
+    <p class="hint">Add anything you'd be happy eating tonight — the wheel only picks from what's here.</p>
+    <form class="add-row" id="addForm">
+      <input type="text" id="addInput" placeholder="e.g. Tacos, Ramen, Pizza..." maxlength="28" autocomplete="off">
+      <button type="submit">Add</button>
+    </form>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <footer>Built for the food-randomizer app assignment.</footer>
+</div>
+
+<script>
+(function(){
+  const COLORS = ['#FF6B5B', '#FFB238', '#7A9B57', '#8C5E82', '#3A8891', '#C1443C'];
+
+  let foods = ['Pizza', 'Tacos', 'Sushi', 'Burgers', 'Ramen', 'Pho', 'Salad', 'Fried Chicken'];
+
+  const canvas = document.getElementById('wheel');
+  const ctx = canvas.getContext('2d');
+  const chipsEl = document.getElementById('chips');
+  const addForm = document.getElementById('addForm');
+  const addInput = document.getElementById('addInput');
+  const spinBtn = document.getElementById('spinBtn');
+  const resultEl = document.getElementById('result');
+
+  let rotation = 0;       // current rotation in radians
+  let spinning = false;
+
+  function drawWheel(){
+    const w = canvas.width, h = canvas.height;
+    const cx = w/2, cy = h/2, r = w/2 - 6;
+    ctx.clearRect(0,0,w,h);
+
+    const n = foods.length;
+    if(n === 0){
+      ctx.save();
+      ctx.fillStyle = '#F3ECDA';
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#8C5E82';
+      ctx.font = '600 22px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Add some food!', cx, cy);
+      ctx.restore();
+      return;
+    }
+
+    const slice = (Math.PI*2) / n;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+
+    for(let i=0; i<n; i++){
+      const start = i*slice;
+      const end = start + slice;
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.arc(0,0,r, start, end);
+      ctx.closePath();
+      ctx.fillStyle = COLORS[i % COLORS.length];
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(19,26,49,0.55)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // label
+      ctx.save();
+      ctx.rotate(start + slice/2);
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#FFF9EE';
+      const fontSize = n > 10 ? 15 : 19;
+      ctx.font = `600 ${fontSize}px Baloo 2, sans-serif`;
+      const label = foods[i].length > 16 ? foods[i].slice(0,15)+'…' : foods[i];
+      ctx.fillText(label, r - 18, 0);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  function renderChips(){
+    chipsEl.innerHTML = '';
+    if(foods.length === 0){
+      const p = document.createElement('p');
+      p.className = 'empty';
+      p.textContent = 'No foods yet — add your first option above.';
+      chipsEl.appendChild(p);
+      return;
+    }
+    foods.forEach((food, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      const sw = document.createElement('span');
+      sw.className = 'swatch';
+      sw.style.background = COLORS[i % COLORS.length];
+      const label = document.createElement('span');
+      label.textContent = food;
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.setAttribute('aria-label', 'Remove ' + food);
+      del.textContent = '×';
+      del.addEventListener('click', () => {
+        foods.splice(i, 1);
+        renderChips();
+        drawWheel();
+      });
+      chip.appendChild(sw);
+      chip.appendChild(label);
+      chip.appendChild(del);
+      chipsEl.appendChild(chip);
+    });
+  }
+
+  addForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = addInput.value.trim();
+    if(!val) return;
+    if(foods.some(f => f.toLowerCase() === val.toLowerCase())){
+      addInput.value = '';
+      return;
+    }
+    foods.push(val);
+    addInput.value = '';
+    renderChips();
+    drawWheel();
+  });
+
+  function easeOutCubic(t){
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function spin(){
+    if(spinning || foods.length < 2) return;
+    spinning = true;
+    spinBtn.disabled = true;
+    resultEl.innerHTML = '';
+
+    const n = foods.length;
+    const slice = (Math.PI*2) / n;
+
+    // Pick a winning index uniformly at random.
+    const winnerIndex = Math.floor(Math.random() * n);
+
+    // Pointer points straight up (angle = -PI/2 in standard canvas terms,
+    // but since slices are drawn from rotation=0 going clockwise starting at angle 0,
+    // the pointer effectively sits at the "top" which corresponds to -90deg from slice start).
+    // We compute the target rotation so that the winner's slice center lands under the pointer (top).
+    const sliceCenter = winnerIndex * slice + slice/2;
+    const extraSpins = 5 + Math.random()*2; // 5-7 full spins
+    // We want: (rotation + sliceCenter) mod 2PI == -PI/2 (top), i.e. pointer position
+    const targetTop = -Math.PI/2;
+    let targetRotation = extraSpins * Math.PI*2 + (targetTop - sliceCenter);
+
+    const startRotation = rotation % (Math.PI*2);
+    // normalize so animation always spins forward
+    targetRotation = targetRotation - (rotation - startRotation);
+
+    const duration = 4200;
+    const startTime = performance.now();
+    const fromRotation = rotation;
+    const delta = (startRotation + targetRotation) - fromRotation;
+
+    function frame(now){
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = easeOutCubic(t);
+      rotation = fromRotation + delta * eased;
+      drawWheel();
+      if(t < 1){
+        requestAnimationFrame(frame);
+      } else {
+        spinning = false;
+        spinBtn.disabled = false;
+        showResult(foods[winnerIndex]);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function showResult(food){
+    resultEl.innerHTML = `<div class="card"><span>Tonight's pick</span>${food}</div>`;
+  }
+
+  spinBtn.addEventListener('click', spin);
+
+  renderChips();
+  drawWheel();
+})();
+</script>
+</body>
+</html>
