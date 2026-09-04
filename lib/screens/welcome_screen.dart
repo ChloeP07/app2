@@ -40,7 +40,7 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          SizedBox(height: isCompact ? 26 : 48),
+                          SizedBox(height: isCompact ? 52 : 88),
                           Text(
                             'Welcome',
                             textAlign: TextAlign.center,
