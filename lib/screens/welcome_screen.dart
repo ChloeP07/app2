@@ -27,71 +27,74 @@ class WelcomeScreen extends StatelessWidget {
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
+                final isCompact = constraints.maxHeight < 700;
+
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(28, 22, 28, 24),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: math.max(0, constraints.maxHeight - 46),
-                    ),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 16),
-                        const Text(
-                          'Welcome',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: _orange,
-                            fontFamily: 'cursive',
-                            fontSize: 58,
-                            fontWeight: FontWeight.w800,
-                            height: 1,
-                            letterSpacing: -2,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'making your food choices easier',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: _pink,
-                            fontSize: 17,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: .2,
-                          ),
-                        ),
-                        SizedBox(height: constraints.maxHeight > 720 ? 34 : 18),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: _FoodCollage(),
-                        ),
-                        SizedBox(height: constraints.maxHeight > 720 ? 34 : 18),
-                        SizedBox(
-                          width: 210,
-                          height: 58,
-                          child: FilledButton(
-                            key: const Key('get-started-button'),
-                            onPressed: () => _showComingSoon(context),
-                            style: FilledButton.styleFrom(
-                              backgroundColor: _pink,
-                              foregroundColor: Colors.white,
-                              elevation: 7,
-                              shadowColor: _orange.withValues(alpha: .35),
-                              shape: const StadiumBorder(
-                                side: BorderSide(color: _ink, width: 1.5),
-                              ),
-                            ),
-                            child: const Text(
-                              'Get Started',
-                              style: TextStyle(
-                                fontSize: 21,
-                                fontWeight: FontWeight.w700,
-                              ),
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 430,
+                        minHeight: math.max(0, constraints.maxHeight - 40),
+                      ),
+                      child: Column(
+                        children: [
+                          SizedBox(height: isCompact ? 26 : 48),
+                          Text(
+                            'Welcome',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: _orange,
+                              fontFamily: 'cursive',
+                              fontSize: isCompact ? 66 : 76,
+                              fontWeight: FontWeight.w800,
+                              height: .92,
+                              letterSpacing: -2.5,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 18),
-                      ],
+                          const SizedBox(height: 12),
+                          const Text(
+                            'making your food choices easier',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: _pink,
+                              fontSize: 18,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: .2,
+                            ),
+                          ),
+                          SizedBox(height: isCompact ? 20 : 30),
+                          const Center(child: _FoodCollage()),
+                          SizedBox(height: isCompact ? 24 : 36),
+                          SizedBox(
+                            width: 270,
+                            height: 70,
+                            child: FilledButton(
+                              key: const Key('get-started-button'),
+                              onPressed: () => _showComingSoon(context),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: _pink,
+                                foregroundColor: Colors.white,
+                                elevation: 7,
+                                shadowColor: _orange.withValues(alpha: .35),
+                                shape: const StadiumBorder(
+                                  side: BorderSide(color: _ink, width: 1.5),
+                                ),
+                              ),
+                              child: const Text(
+                                'Get Started',
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 22),
+                        ],
+                      ),
                     ),
                   ),
                 );
