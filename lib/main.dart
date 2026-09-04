@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'screens/welcome_screen.dart';
+
 void main() {
   runApp(const App2());
 }
@@ -13,10 +15,14 @@ class App2 extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'app2',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFFF8A3D),
+          surface: const Color(0xFFFFF4CC),
+        ),
+        scaffoldBackgroundColor: const Color(0xFFFFF4CC),
         useMaterial3: true,
       ),
-      home: const Scaffold(body: Center(child: Text('app2'))),
+      home: const WelcomeScreen(),
     );
   }
 }
