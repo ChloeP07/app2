@@ -10,7 +10,6 @@ void main() {
     expect(find.text('Welcome'), findsOneWidget);
     expect(find.text('making your food choices easier'), findsOneWidget);
     expect(find.text('Get Started'), findsOneWidget);
-    expect(find.byKey(const Key('google-sign-in-button')), findsOneWidget);
-    expect(find.byKey(const Key('gmail-sign-in-button')), findsOneWidget);
+    expect(find.byKey(const Key('get-started-button')), findsOneWidget);
   });
 }

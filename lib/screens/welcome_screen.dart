@@ -10,11 +10,11 @@ const _ink = Color(0xFF34261E);
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
-  void _showComingSoon(BuildContext context, String option) {
+  void _showComingSoon(BuildContext context) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text('$option sign-in will be connected next.')),
+        const SnackBar(content: Text('The next screen is coming soon.')),
       );
   }
 
@@ -71,8 +71,7 @@ class WelcomeScreen extends StatelessWidget {
                           height: 58,
                           child: FilledButton(
                             key: const Key('get-started-button'),
-                            onPressed: () =>
-                                _showComingSoon(context, 'Get started'),
+                            onPressed: () => _showComingSoon(context),
                             style: FilledButton.styleFrom(
                               backgroundColor: _pink,
                               foregroundColor: Colors.white,
@@ -91,37 +90,7 @@ class WelcomeScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _SignInButton(
-                              label: 'Google',
-                              child: const _GoogleMark(),
-                              onPressed: () =>
-                                  _showComingSoon(context, 'Google'),
-                            ),
-                            const SizedBox(width: 18),
-                            _SignInButton(
-                              label: 'Gmail',
-                              child: const Icon(
-                                Icons.mail_outline_rounded,
-                                color: _orange,
-                                size: 27,
-                              ),
-                              onPressed: () =>
-                                  _showComingSoon(context, 'Gmail'),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          'Sign in with Google or Gmail',
-                          style: TextStyle(
-                            color: Color(0xFF756158),
-                            fontSize: 13,
-                          ),
-                        ),
+                        const SizedBox(height: 18),
                       ],
                     ),
                   ),
@@ -225,57 +194,6 @@ class _FoodCard extends StatelessWidget {
         ],
       ),
       child: Icon(icon, color: color, size: size * .58),
-    );
-  }
-}
-
-class _SignInButton extends StatelessWidget {
-  const _SignInButton({
-    required this.label,
-    required this.child,
-    required this.onPressed,
-  });
-
-  final String label;
-  final Widget child;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: 'Sign in with $label',
-      child: SizedBox.square(
-        dimension: 52,
-        child: IconButton.filledTonal(
-          key: Key('${label.toLowerCase()}-sign-in-button'),
-          tooltip: 'Sign in with $label',
-          onPressed: onPressed,
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            side: const BorderSide(color: _ink, width: 1.5),
-            shadowColor: Colors.black26,
-            elevation: 3,
-          ),
-          icon: child,
-        ),
-      ),
-    );
-  }
-}
-
-class _GoogleMark extends StatelessWidget {
-  const _GoogleMark();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      'G',
-      style: TextStyle(
-        color: Color(0xFF4285F4),
-        fontSize: 25,
-        fontWeight: FontWeight.w900,
-      ),
     );
   }
 }
