@@ -40,38 +40,49 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          SizedBox(height: isCompact ? 52 : 88),
-                          Text(
-                            'Welcome',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: _orange,
-                              fontFamily: 'cursive',
-                              fontSize: isCompact ? 66 : 76,
-                              fontWeight: FontWeight.w800,
-                              height: .92,
-                              letterSpacing: -2.5,
+                          SizedBox(height: isCompact ? 38 : 66),
+                          const _RetroBadge(),
+                          const SizedBox(height: 14),
+                          _WelcomeTitle(fontSize: isCompact ? 66 : 76),
+                          const SizedBox(height: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 7,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: .72),
+                              borderRadius: BorderRadius.circular(99),
+                              border: Border.all(
+                                color: _pink.withValues(alpha: .45),
+                              ),
+                            ),
+                            child: const Text(
+                              'making your food choices easier',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFFE86F7C),
+                                fontSize: 17,
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: .2,
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            'making your food choices easier',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: _pink,
-                              fontSize: 18,
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: .2,
+                          SizedBox(height: isCompact ? 16 : 24),
+                          const SizedBox(
+                            width: double.infinity,
+                            height: 280,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: _FoodCollage(),
                             ),
                           ),
                           SizedBox(height: isCompact ? 20 : 30),
-                          const Center(child: _FoodCollage()),
-                          SizedBox(height: isCompact ? 24 : 36),
                           SizedBox(
-                            width: 270,
-                            height: 70,
-                            child: FilledButton(
+                            width: 286,
+                            height: 72,
+                            child: FilledButton.icon(
                               key: const Key('get-started-button'),
                               onPressed: () => _showComingSoon(context),
                               style: FilledButton.styleFrom(
@@ -83,7 +94,8 @@ class WelcomeScreen extends StatelessWidget {
                                   side: BorderSide(color: _ink, width: 1.5),
                                 ),
                               ),
-                              child: const Text(
+                              icon: const Icon(Icons.auto_awesome_rounded),
+                              label: const Text(
                                 'Get Started',
                                 style: TextStyle(
                                   fontSize: 25,
@@ -107,61 +119,218 @@ class WelcomeScreen extends StatelessWidget {
   }
 }
 
-class _FoodCollage extends StatelessWidget {
-  const _FoodCollage();
+class _RetroBadge extends StatelessWidget {
+  const _RetroBadge();
 
   @override
   Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: -.025,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+        decoration: BoxDecoration(
+          color: _ink,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: const [BoxShadow(color: _pink, offset: Offset(4, 4))],
+        ),
+        child: const Text(
+          'WHAT SHOULD WE EAT?',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.8,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WelcomeTitle extends StatelessWidget {
+  const _WelcomeTitle({required this.fontSize});
+
+  final double fontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = TextStyle(
+      fontFamily: 'cursive',
+      fontSize: fontSize,
+      fontWeight: FontWeight.w800,
+      height: .92,
+      letterSpacing: -2.5,
+    );
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Transform.translate(
+          offset: const Offset(3, 4),
+          child: Text('Welcome', style: style.copyWith(color: _pink)),
+        ),
+        Text('Welcome', style: style.copyWith(color: _orange)),
+      ],
+    );
+  }
+}
+
+class _FoodCollage extends StatefulWidget {
+  const _FoodCollage();
+
+  @override
+  State<_FoodCollage> createState() => _FoodCollageState();
+}
+
+class _FoodCollageState extends State<_FoodCollage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 5200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+
     return Semantics(
       label: 'A playful collage of different foods',
       child: SizedBox(
-        height: 260,
-        width: 320,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              left: 14,
-              top: 24,
-              child: Transform.rotate(
-                angle: -.12,
-                child: const _FoodCard(
-                  icon: Icons.lunch_dining_rounded,
-                  color: Color(0xFFE85D3F),
-                  background: Color(0xFFFFD8A8),
-                  size: 112,
+        height: 280,
+        width: 340,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            final progress = reduceMotion
+                ? 0.0
+                : _controller.value * math.pi * 2;
+
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  left: 12,
+                  top: 48,
+                  child: _FloatingFood(
+                    progress: progress,
+                    phase: 0,
+                    angle: -.10,
+                    child: const _FoodCard(
+                      icon: Icons.lunch_dining_rounded,
+                      color: Color(0xFFE85D3F),
+                      background: Color(0xFFFFD0A0),
+                      size: 108,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Positioned(
-              right: 10,
-              top: 2,
-              child: Transform.rotate(
-                angle: .10,
-                child: const _FoodCard(
-                  icon: Icons.ramen_dining_rounded,
-                  color: Color(0xFFEA6045),
-                  background: Color(0xFFFFE7B5),
-                  size: 142,
+                Positioned(
+                  right: 16,
+                  top: 18,
+                  child: _FloatingFood(
+                    progress: progress,
+                    phase: 1.3,
+                    angle: .10,
+                    child: const _FoodCard(
+                      icon: Icons.ramen_dining_rounded,
+                      color: Color(0xFFE85D3F),
+                      background: Color(0xFFFFE5A5),
+                      size: 126,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Positioned(
-              left: 100,
-              bottom: 4,
-              child: Transform.rotate(
-                angle: -.18,
-                child: const _FoodCard(
-                  icon: Icons.local_pizza_rounded,
-                  color: Color(0xFFD96B35),
-                  background: Color(0xFFFFC86B),
-                  size: 104,
+                Positioned(
+                  left: 118,
+                  bottom: 4,
+                  child: _FloatingFood(
+                    progress: progress,
+                    phase: 2.7,
+                    angle: -.16,
+                    child: const _FoodCard(
+                      icon: Icons.local_pizza_rounded,
+                      color: Color(0xFFD66136),
+                      background: Color(0xFFFFBD69),
+                      size: 104,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+                Positioned(
+                  left: 28,
+                  bottom: 18,
+                  child: _FloatingFood(
+                    progress: progress,
+                    phase: 4.1,
+                    angle: .12,
+                    child: const _FoodCard(
+                      icon: Icons.icecream_rounded,
+                      color: Color(0xFFE96B83),
+                      background: Color(0xFFFFCEE0),
+                      size: 72,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 18,
+                  bottom: 28,
+                  child: _FloatingFood(
+                    progress: progress,
+                    phase: 5.2,
+                    angle: -.08,
+                    child: const _FoodCard(
+                      icon: Icons.kebab_dining_rounded,
+                      color: Color(0xFF8AA34A),
+                      background: Color(0xFFDCE9A6),
+                      size: 76,
+                    ),
+                  ),
+                ),
+                const Positioned(
+                  left: 142,
+                  top: 34,
+                  child: Icon(
+                    Icons.auto_awesome_rounded,
+                    color: _pink,
+                    size: 28,
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
+    );
+  }
+}
+
+class _FloatingFood extends StatelessWidget {
+  const _FloatingFood({
+    required this.progress,
+    required this.phase,
+    required this.angle,
+    required this.child,
+  });
+
+  final double progress;
+  final double phase;
+  final double angle;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.translate(
+      offset: Offset(0, math.sin(progress + phase) * 5),
+      child: Transform.rotate(angle: angle, child: child),
     );
   }
 }
@@ -207,6 +376,28 @@ class _WavePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawColor(_cream, BlendMode.src);
+
+    final checkerPaint = Paint();
+    const square = 22.0;
+    for (var column = 0; column <= size.width ~/ square; column++) {
+      checkerPaint.color = column.isEven ? _pink : Colors.white;
+      canvas.drawRect(
+        Rect.fromLTWH(column * square, 0, square, 12),
+        checkerPaint,
+      );
+    }
+
+    final dotPaint = Paint()..color = _orange.withValues(alpha: .12);
+    for (final offset in const [
+      Offset(28, 170),
+      Offset(54, 196),
+      Offset(350, 210),
+      Offset(374, 184),
+      Offset(34, 610),
+      Offset(370, 650),
+    ]) {
+      canvas.drawCircle(offset, 5, dotPaint);
+    }
 
     final whitePaint = Paint()
       ..color = Colors.white.withValues(alpha: .82)
