@@ -155,21 +155,51 @@ class _WelcomeTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = TextStyle(
-      fontFamily: 'cursive',
       fontSize: fontSize,
-      fontWeight: FontWeight.w800,
-      height: .92,
-      letterSpacing: -2.5,
+      fontWeight: FontWeight.w900,
+      height: .95,
+      letterSpacing: -3.5,
     );
 
     return Stack(
       alignment: Alignment.center,
       children: [
         Transform.translate(
-          offset: const Offset(3, 4),
-          child: Text('Welcome', style: style.copyWith(color: _pink)),
+          offset: const Offset(4, 6),
+          child: Text(
+            'Welcome',
+            style: style.copyWith(
+              foreground: Paint()
+                ..color = _pink
+                ..style = PaintingStyle.stroke
+                ..strokeWidth = 7
+                ..strokeJoin = StrokeJoin.round,
+            ),
+          ),
         ),
-        Text('Welcome', style: style.copyWith(color: _orange)),
+        Text(
+          'Welcome',
+          style: style.copyWith(
+            foreground: Paint()
+              ..color = Colors.white
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 5
+              ..strokeJoin = StrokeJoin.round,
+          ),
+        ),
+        Text(
+          'Welcome',
+          style: style.copyWith(
+            color: _orange,
+            shadows: const [
+              Shadow(
+                color: Color(0x33A34A24),
+                offset: Offset(0, 2),
+                blurRadius: 1,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
