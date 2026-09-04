@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/restaurants.dart';
 import '../models/restaurant.dart';
 import 'recommendation_screen.dart';
+import 'wheel_screen.dart';
 
 const _orange = Color(0xFFFF8A3D);
 const _pink = Color(0xFFFF8F99);
@@ -16,6 +17,14 @@ class CategorySelectionScreen extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => RecommendationScreen(restaurant: restaurant),
+      ),
+    );
+  }
+
+  void _openWheel(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const WheelScreen(),
       ),
     );
   }
@@ -57,7 +66,7 @@ class CategorySelectionScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     const Text(
-                      'Choose a category to preview the wheel result.',
+                      'Choose a category or let the wheel decide!',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFF79665C),
@@ -65,7 +74,32 @@ class CategorySelectionScreen extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 58,
+                      child: FilledButton.icon(
+                        key: const Key('open-wheel-button'),
+                        onPressed: () => _openWheel(context),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: _pink,
+                          foregroundColor: Colors.white,
+                          elevation: 5,
+                          shadowColor: _orange.withValues(alpha: .3),
+                          shape: const StadiumBorder(
+                            side: BorderSide(color: _ink, width: 1.5),
+                          ),
+                        ),
+                        icon: const Icon(Icons.casino_rounded),
+                        label: const Text(
+                          'Spin All Restaurants',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     Expanded(
                       child: GridView.builder(
                         itemCount: restaurants.length,
@@ -78,10 +112,12 @@ class CategorySelectionScreen extends StatelessWidget {
                             ),
                         itemBuilder: (context, index) {
                           final restaurant = restaurants[index];
+
                           return _CategoryCard(
                             restaurant: restaurant,
                             index: index,
-                            onTap: () => _selectRestaurant(context, restaurant),
+                            onTap: () =>
+                                _selectRestaurant(context, restaurant),
                           );
                         },
                       ),
