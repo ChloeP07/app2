@@ -11,5 +11,12 @@ void main() {
     expect(find.text('making your food choices easier'), findsOneWidget);
     expect(find.text('Get Started'), findsOneWidget);
     expect(find.byKey(const Key('get-started-button')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('get-started-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('What sounds good?'), findsOneWidget);
+    expect(find.text('Mexican'), findsOneWidget);
+    expect(find.text('Soul Food'), findsOneWidget);
   });
 }

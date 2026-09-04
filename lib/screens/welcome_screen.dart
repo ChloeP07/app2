@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'category_selection_screen.dart';
+
 const _orange = Color(0xFFFF8A3D);
 const _pink = Color(0xFFFF8F99);
 const _cream = Color(0xFFFFF4CC);
@@ -10,12 +12,10 @@ const _ink = Color(0xFF34261E);
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
-  void _showComingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(content: Text('The next screen is coming soon.')),
-      );
+  void _getStarted(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const CategorySelectionScreen()),
+    );
   }
 
   @override
@@ -84,7 +84,7 @@ class WelcomeScreen extends StatelessWidget {
                             height: 72,
                             child: FilledButton.icon(
                               key: const Key('get-started-button'),
-                              onPressed: () => _showComingSoon(context),
+                              onPressed: () => _getStarted(context),
                               style: FilledButton.styleFrom(
                                 backgroundColor: _pink,
                                 foregroundColor: Colors.white,
